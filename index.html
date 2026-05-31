@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Цифровое расписание | Гимназия №23</title>
+    <meta name="theme-color" content="#126c64" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23126c64'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial' font-size='14' font-weight='700' fill='white'%3E23%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="styles.css?v=20260531-4" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand__mark">23</div>
+        <div>
+          <p class="eyebrow">МАОУ «Гимназия №23» · Троицк</p>
+          <h1>Цифровое расписание</h1>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a class="source-link" href="https://gym23trk.educhel.ru/about/schedule" target="_blank" rel="noreferrer">
+          Официальный источник
+        </a>
+        <div class="user-chip" id="userChip" aria-live="polite">
+          <div class="user-chip__avatar" id="userAvatar">?</div>
+          <div class="user-chip__text">
+            <strong id="accountName">Гость</strong>
+            <span id="accountRole">Вход не выполнен</span>
+          </div>
+        </div>
+        <button class="icon-button" id="exportBtn" type="button" title="Экспорт CSV" aria-label="Экспорт CSV">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3v10m0 0 4-4m-4 4-4-4M4 15v4h16v-4" />
+          </svg>
+        </button>
+        <button class="icon-button" id="printBtn" type="button" title="Печать" aria-label="Печать">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2M7 14h10v7H7z" />
+          </svg>
+        </button>
+        <button class="icon-button auth-toggle" id="logoutBtn" type="button" title="Сменить пользователя" aria-label="Сменить пользователя">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 17 5 12l5-5M5 12h12M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" />
+          </svg>
+          <span id="authButtonText">Войти</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="auth-overlay is-hidden" id="authOverlay" aria-labelledby="authTitle" role="dialog" aria-modal="true">
+      <div class="auth-card">
+        <div class="auth-card__intro">
+          <p class="eyebrow">Вход для сотрудников</p>
+          <h2 id="authTitle">Расширенный доступ</h2>
+          <p>
+            Ученики и родители могут смотреть базовое расписание без авторизации.
+            Вход нужен только сотрудникам для аналитики, замен и экспорта.
+          </p>
+        </div>
+        <form class="auth-form" id="loginForm">
+          <div class="control">
+            <label for="loginInput">Логин</label>
+            <input id="loginInput" name="login" autocomplete="username" required />
+          </div>
+          <div class="control">
+            <label for="passwordInput">Пароль</label>
+            <input id="passwordInput" name="password" type="password" autocomplete="current-password" required />
+          </div>
+          <div class="auth-error is-hidden" id="loginError" role="alert"></div>
+          <button class="login-button" type="submit">Войти</button>
+          <button class="ghost-button" id="closeAuthBtn" type="button">Продолжить без входа</button>
+        </form>
+      </div>
+    </section>
+
+    <main class="app-shell">
+      <noscript>
+        <div class="app-error">Для работы приложения нужен включенный JavaScript.</div>
+      </noscript>
+
+      <section class="command-bar" aria-label="Оперативная панель">
+        <div class="command-bar__copy">
+          <p class="eyebrow">Оперативная панель</p>
+          <h2 id="dashboardTitle">Контроль расписания</h2>
+          <div class="command-bar__facts">
+            <span id="weekRange">Неделя загружается</span>
+          </div>
+        </div>
+        <div class="quick-actions">
+          <button class="quick-button" id="todayBtn" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12H4V7a2 2 0 0 1 2-2z" /></svg>
+            Сегодня
+          </button>
+          <button class="quick-button" id="issuesBtn" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5m0 4h.01M10.3 4.5 2.8 18a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.5a2 2 0 0 0-3.4 0z" /></svg>
+            Сигналы
+          </button>
+          <button class="quick-button" id="replaceQuickBtn" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10l-3-3m3 3-3 3M17 17H7l3 3m-3-3 3-3" /></svg>
+            Замена
+          </button>
+        </div>
+      </section>
+
+      <div class="app-error is-hidden" id="appError" role="alert"></div>
+      <div class="freshness-alert is-hidden" id="freshnessAlert" role="status"></div>
+      <section class="role-panel" id="rolePanel" aria-label="Права пользователя"></section>
+
+      <section class="controls" aria-label="Фильтры расписания">
+        <div class="control">
+          <label for="classSelect">Класс</label>
+          <select id="classSelect"></select>
+        </div>
+        <div class="control">
+          <label for="teacherSelect">Учитель</label>
+          <select id="teacherSelect"></select>
+        </div>
+        <div class="control">
+          <label for="roomSelect">Кабинет</label>
+          <select id="roomSelect"></select>
+        </div>
+        <div class="control control--wide">
+          <label for="searchInput">Поиск</label>
+          <input id="searchInput" type="search" placeholder="Предмет, учитель, кабинет" />
+        </div>
+        <div class="segmented" role="tablist" aria-label="Разделы">
+          <button type="button" class="segmented__button is-active" data-view="class">Класс</button>
+          <button type="button" class="segmented__button" data-view="teacher">Учитель</button>
+          <button type="button" class="segmented__button" data-view="room">Кабинет</button>
+          <button type="button" class="segmented__button" data-view="analytics">Аналитика</button>
+          <button type="button" class="segmented__button" data-view="replace">Замены</button>
+        </div>
+      </section>
+
+      <section class="day-strip" id="dayStrip" aria-label="Дни недели"></section>
+
+      <section class="metrics" id="metrics" aria-label="Сводные показатели"></section>
+
+      <section class="workspace">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" id="sectionMeta">Неделя</p>
+            <h2 id="sectionTitle">Расписание</h2>
+          </div>
+          <div class="status-pill" id="dataStatus">Данные загружены</div>
+        </div>
+        <div id="contentRoot"></div>
+      </section>
+    </main>
+
+    <footer class="official-footer" aria-label="Сведения об образовательной организации">
+      <p class="official-footer__title">Контакты и официальный источник</p>
+      <div class="official-footer__contacts">
+        <div class="footer-contact">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11z" /><path d="M12 10.5h.01" /></svg>
+          <span>Троицк, ул. им. Н.К. Крупской, д. 5</span>
+        </div>
+        <a class="footer-contact" href="tel:+73516333796">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z" /></svg>
+          <span>+7 (351) 633-37-96</span>
+        </a>
+        <a class="footer-contact" href="mailto:trmou23@mail.ru">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z" /><path d="m4 7 8 6 8-6" /></svg>
+          <span>trmou23@mail.ru</span>
+        </a>
+        <a class="footer-contact footer-contact--accent" href="https://gym23trk.educhel.ru/about/schedule" target="_blank" rel="noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12H4V7a2 2 0 0 1 2-2z" /></svg>
+          <span>Официальное расписание</span>
+        </a>
+      </div>
+      <div class="official-footer__note">
+        <span>Расписание проверяется автоматически по воскресеньям. Если источник временно недоступен, показывается последняя сохраненная версия.</span>
+      </div>
+    </footer>
+
+    <script src="data/schedule.js?v=20260531-4"></script>
+    <script>
+      window.SCHEDULE_API_URL = "https://gym23-schedule-api.stmnyy-bit.workers.dev/schedule.json";
+    </script>
+    <script src="app.js?v=20260531-4"></script>
+  </body>
+</html>

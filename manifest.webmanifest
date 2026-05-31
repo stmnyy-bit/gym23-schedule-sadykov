@@ -1,0 +1,19 @@
+{
+  "name": "Цифровое расписание Гимназии №23",
+  "short_name": "Расписание 23",
+  "description": "Ролевое расписание с аналитикой, заменами и offline-first режимом.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7f5",
+  "theme_color": "#126c64",
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
